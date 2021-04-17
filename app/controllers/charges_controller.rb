@@ -2,10 +2,12 @@ class ChargesController < ApplicationController
   before_action :authenticate_user!
   
   def new
+    @product = Product.find(params[:product])
   end
 
   def create
-    @amount = 500
+    @product = Product.find(params[:product])
+    @amount_in_cents = (@product.price * 100).to_i
 
     customer = Stripe::Customer.create(
                   :email => params[:stripeEmail],
@@ -14,8 +16,8 @@ class ChargesController < ApplicationController
 
     charge = Stripe::Charge.create(
                 :customer => customer.id,
-                :amount => @amount,
-                :description => 'Buying New Product',
+                :amount => @amount_in_cents,
+                :description => "Buying Product - #{@product.title}(#{@product.id})",
                 :currency => 'inr'
               )
 
