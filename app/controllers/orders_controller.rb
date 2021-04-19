@@ -13,4 +13,8 @@ class OrdersController < ApplicationController
       @order.save
     end
   end
+
+  def index
+    @orders = current_user.orders
+  end
 end

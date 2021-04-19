@@ -1,0 +1,23 @@
+<h1>Total Orders Count - <%= @orders.count %></h1>
+
+<p>Orders List</p>
+<table>
+    <thead>
+      <tr>
+        <th>Order Id</th>
+        <th>Product Title</th>
+        <th>Order Total</th>
+        <th>Payment Id</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @orders.each do |order| %>
+        <tr>
+          <td><%= order.id %></td>
+          <td><%= order.product.title %></td>
+          <td><%= order.total %></td>
+          <td><%= order.stripe_payment_id %></td>
+        </tr>
+      <% end %>
+    </tbody>
+</table>
