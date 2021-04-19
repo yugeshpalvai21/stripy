@@ -1,0 +1,9 @@
+<h1>Review Before Order </h1>
+
+<ul>
+  <li>Product - <%= @order.product.title %></li>
+  <li> Product Price - <%= @product.price %></li>
+  <li>Order Total - <%= @order.total %></li>
+</ul>
+
+<%= link_to "Proceed To Checkout", new_charge_path(order_id: @order.id) %>

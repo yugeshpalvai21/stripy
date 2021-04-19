@@ -2,7 +2,7 @@ class ChargesController < ApplicationController
   before_action :authenticate_user!
   
   def new
-    @product = Product.find(params[:product])
+    @order = Order.find(params[:order_id])
     @session = Stripe::Checkout::Session.create({
       payment_method_types: ['card'],
       line_items: [
@@ -10,19 +10,20 @@ class ChargesController < ApplicationController
           price_data: {
             currency: 'inr',
             product_data: {
-              name: @product.title 
+              name: @order.product.title 
             },
-            unit_amount: (@product.price * 100).to_i,
+            unit_amount: (@order.total * 100).to_i,
           },
           quantity: 1
         }
       ],
       mode: 'payment',
       # These placeholder URLs will be replaced in a following step.
-      success_url: "http://localhost:3000/charges/success/?product=#{@product.id}&session_id={CHECKOUT_SESSION_ID}",
+      success_url: "http://localhost:3000/charges/success/?order=#{@order.id}&session_id={CHECKOUT_SESSION_ID}",
       cancel_url: 'http://localhost:3000/charges/cancel',
       customer_email: current_user.email
     })
+    @order.update(stripe_session_id: @session.id)
   end
 
   def create
@@ -48,7 +49,11 @@ class ChargesController < ApplicationController
   end
 
   def success
+    @order = Order.find_by(stripe_session_id: params[:session_id])
     @payment_details = Stripe::Checkout::Session.retrieve(params[:session_id])
+    @order.paid = true
+    @order.stripe_payment_id = @payment_details.payment_intent
+    @order.save
   end
 
   def cancel
