@@ -15,6 +15,10 @@ class OrdersController < ApplicationController
   end
 
   def index
-    @orders = current_user.orders
+    @orders = current_user.orders.where(paid: true)
+  end
+
+  def show
+    @order = Order.find(params[:id])
   end
 end

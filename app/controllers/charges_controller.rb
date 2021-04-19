@@ -54,6 +54,7 @@ class ChargesController < ApplicationController
     @order.paid = true
     @order.stripe_payment_id = @payment_details.payment_intent
     @order.save
+    redirect_to order_path(@order), notice: 'Congratulations... You Order Created Succeessfully With Us...'
   end
 
   def cancel
